@@ -2,7 +2,6 @@ import React from 'react';
 import '../App.css';
 
 const Board = ({ board, onColumnClick, animatingCell, winner, cellSize }) => {
-    const rows = board.length;
     const cols = board[0].length;
 
     return (
