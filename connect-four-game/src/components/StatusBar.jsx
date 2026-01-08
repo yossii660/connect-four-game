@@ -15,6 +15,7 @@ const StatusBar = ({
                    }) => {
     return (
         <div className="status-container">
+            {/* הצגת סטטוס משחק רגיל (כשאין מנצח) */}
             {!winner && (
                 <div className="status-box">
                     <div className="current-player">
@@ -31,6 +32,7 @@ const StatusBar = ({
                         </div>
                     </div>
 
+                    {/* אזור ה-Undo: מוצג רק אם ניתן לבצע Undo */}
                     {canUndo && (
                         <div className="undo-box">
                             <div className="undo-timer">
@@ -46,6 +48,7 @@ const StatusBar = ({
                 </div>
             )}
 
+            {/* הצגת הודעת ניצחון */}
             {winner && (
                 <div className="winner-box">
                     <div className="winner-content">
@@ -57,6 +60,7 @@ const StatusBar = ({
                 </div>
             )}
 
+            {/* כפתורי שליטה */}
             <div className="controls">
                 <button
                     onClick={onHint}

@@ -4,6 +4,7 @@ import '../App.css';
 const SetupScreen = ({ onStartGame }) => {
     const [boardSize, setBoardSize] = useState('medium');
 
+    // אפשרויות גודל הלוח
     const sizeOptions = {
         small: { label: 'קטן', cellSize: 50 },
         medium: { label: 'בינוני', cellSize: 70 },
@@ -49,6 +50,7 @@ const SetupScreen = ({ onStartGame }) => {
                     </ul>
                 </div>
 
+                {/* בחירת גודל */}
                 <div className="size-selector">
                     <label className="size-label">בחר גודל תצוגה:</label>
                     <div className="size-buttons">
@@ -64,6 +66,7 @@ const SetupScreen = ({ onStartGame }) => {
                     </div>
                 </div>
 
+                {/* כפתור התחלה - שולח את גודל התא הנבחר */}
                 <button
                     onClick={() => onStartGame(sizeOptions[boardSize].cellSize)}
                     className="start-button"

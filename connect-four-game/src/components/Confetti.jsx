@@ -8,6 +8,7 @@ const Confetti = () => {
         const ctx = canvas.getContext('2d');
         let animationFrameId;
 
+        // התאמת גודל הקנבס לחלון
         const resizeCanvas = () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
@@ -19,13 +20,13 @@ const Confetti = () => {
         const colors = ['#ef4444', '#fbbf24', '#2563eb', '#3fdb27', '#9333ea', '#f472b6'];
         const particles = [];
 
-        // יצירת חלקיקים
+        // יצירת 200 חלקיקים התחלתיים
         for (let i = 0; i < 200; i++) {
             particles.push({
                 x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height - canvas.height,
-                vx: Math.random() * 4 - 2,
-                vy: Math.random() * 3 + 2,
+                y: Math.random() * canvas.height - canvas.height, // מתחילים מעל המסך או מפוזרים
+                vx: Math.random() * 4 - 2, // מהירות אופקית
+                vy: Math.random() * 3 + 2, // מהירות אנכית (נפילה)
                 color: colors[Math.floor(Math.random() * colors.length)],
                 size: Math.random() * 8 + 4,
                 rotation: Math.random() * 360,
@@ -33,21 +34,24 @@ const Confetti = () => {
             });
         }
 
+        // לולאת האנימציה
         const render = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             particles.forEach(p => {
+                // עדכון מיקום
                 p.x += p.vx;
                 p.y += p.vy;
                 p.rotation += p.rotationSpeed;
 
-                // איפוס כשהחלקיק יוצא מהמסך
+                // איפוס כשהחלקיק יוצא מהמסך (למטה) - מחזירים אותו למעלה
                 if (p.y > canvas.height) {
                     p.y = -20;
                     p.x = Math.random() * canvas.width;
                     p.vy = Math.random() * 3 + 2;
                 }
 
+                // ציור החלקיק
                 ctx.save();
                 ctx.translate(p.x, p.y);
                 ctx.rotate((p.rotation * Math.PI) / 180);

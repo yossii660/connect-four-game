@@ -6,19 +6,22 @@ import Confetti from './components/Confetti';
 import './App.css';
 
 const ConnectFourGame = () => {
+    // --- ניהול מצב (State) ---
     const [gameStarted, setGameStarted] = useState(false);
-    const [cellSize, setCellSize] = useState(70);
-    const [board, setBoard] = useState([]);
-    const [currentPlayer, setCurrentPlayer] = useState(1);
-    const [winner, setWinner] = useState(null);
-    const [timeLeft, setTimeLeft] = useState(10);
-    const [undoTimeLeft, setUndoTimeLeft] = useState(0);
-    const [lastMove, setLastMove] = useState(null);
-    const [animatingCell, setAnimatingCell] = useState(null);
-    const [hintMessage, setHintMessage] = useState('');
+    const [cellSize, setCellSize] = useState(70); // גודל התא בפיקסלים (לתצוגה)
+    const [board, setBoard] = useState([]); // ייצוג הלוח (מערך דו-ממדי)
+    const [currentPlayer, setCurrentPlayer] = useState(1); // תור מ (1 או 2)
+    const [winner, setWinner] = useState(null); // מנצח (null, 1, או 2)
+    const [timeLeft, setTimeLeft] = useState(10); // זמן נותר לתור הנוכחי
+    const [undoTimeLeft, setUndoTimeLeft] = useState(0); // זמן נותר לביצוע Undo
+    const [lastMove, setLastMove] = useState(null); // שמירת המהלך האחרון לטובת Undo
+    const [animatingCell, setAnimatingCell] = useState(null); // תא שנמצא כרגע באנימציה
+    const [hintMessage, setHintMessage] = useState(''); // הודעת רמז למשתמש
     const ROWS = 6;
     const COLS = 7;
 
+    // --- אתחול הלוח ---
+    // יוצר מערך דו-ממדי ריק (מלא ב-null)
     const initializeBoard = useCallback(() => {
         return Array(ROWS).fill(null).map(() => Array(COLS).fill(null));
     }, []);
@@ -45,6 +48,8 @@ const ConnectFourGame = () => {
         setHintMessage('');
     };
 
+    // --- בדיקת ניצחון ---
+    // בודק ב-4 כיוונים אם יש רצף של 4 אסימונים זהים
     const checkWinner = useCallback((board, row, col, player) => {
         const directions = [
             [0, 1],   // אופקי
@@ -56,6 +61,7 @@ const ConnectFourGame = () => {
         for (const [dr, dc] of directions) {
             let count = 1;
 
+            // בדיקה לכיוון אחד (חיובי)
             let r = row + dr;
             let c = col + dc;
             while (r >= 0 && r < board.length && c >= 0 && c < board[0].length && board[r][c] === player) {
@@ -64,6 +70,7 @@ const ConnectFourGame = () => {
                 c += dc;
             }
 
+            // בדיקה לכיוון ההפוך (שלילי)
             r = row - dr;
             c = col - dc;
             while (r >= 0 && r < board.length && c >= 0 && c < board[0].length && board[r][c] === player) {
@@ -78,6 +85,8 @@ const ConnectFourGame = () => {
         return false;
     }, []);
 
+    // --- לוגיקת רמז (AI פשוט) ---
+    // בודק אם השחקן יכול לנצח במהלך הבא
     const canWinInNextMove = useCallback((board, player) => {
         for (let col = 0; col < board[0].length; col++) {
             let row = -1;
@@ -99,9 +108,12 @@ const ConnectFourGame = () => {
         return false;
     }, [checkWinner]);
 
+    // --- טיפול בלחיצה על עמודה ---
     const handleColumnClick = (col) => {
+        // מניעת מהלך אם יש מנצח או בזמן חלון ה-Undo
         if (winner || undoTimeLeft > 0) return;
 
+        // מציאת השורה הפנויה התחתונה ביותר
         let row = -1;
         for (let r = ROWS - 1; r >= 0; r--) {
             if (board[r][col] === null) {
@@ -112,18 +124,22 @@ const ConnectFourGame = () => {
 
         if (row === -1) return;
 
+        // הפעלת אנימציה
         setAnimatingCell({ row, col, delay: 0 });
         setTimeout(() => setAnimatingCell(null), 600);
 
+        // עדכון הלוח
         const newBoard = board.map(r => [...r]);
         newBoard[row][col] = currentPlayer;
         setBoard(newBoard);
 
+        // בדיקת ניצחון
         if (checkWinner(newBoard, row, col, currentPlayer)) {
             setWinner(currentPlayer);
             setUndoTimeLeft(0);
             return;
         }
+        // הכנה לתור הבא (שמירת Undo, החלפת שחקן, איפוס טיימר)
         setLastMove({ row, col, player: currentPlayer });
         setUndoTimeLeft(5);
         setHintMessage('');
@@ -131,13 +147,14 @@ const ConnectFourGame = () => {
         setTimeLeft(10);
     };
 
+    // --- ביטול מהלך (Undo) ---
     const handleUndo = () => {
         if (!lastMove || undoTimeLeft <= 0) return;
 
         const newBoard = board.map(r => [...r]);
-        newBoard[lastMove.row][lastMove.col] = null;
+        newBoard[lastMove.row][lastMove.col] = null; // מחיקת האסימון
         setBoard(newBoard);
-        setCurrentPlayer(lastMove.player);
+        setCurrentPlayer(lastMove.player); // החזרת התור
         setLastMove(null);
         setUndoTimeLeft(0);
         setTimeLeft(10);
@@ -166,14 +183,16 @@ const ConnectFourGame = () => {
         setHintMessage('');
     };
 
+    // --- טיימר ראשי (תור) ---
     useEffect(() => {
         if (winner || !gameStarted || board.length === 0 || undoTimeLeft > 0) return;
 
         const timer = setInterval(() => {
             setTimeLeft(prev => {
                 if (prev <= 1) {
+                    // נגמר הזמן - החלפת תור כפויה
                     setCurrentPlayer(p => (p === 1 ? 2 : 1));
-                    setLastMove(null);
+                    setLastMove(null); // אי אפשר לעשות Undo אם נגמר הזמן
                     return 10;
                 }
                 return prev - 1;
@@ -183,13 +202,14 @@ const ConnectFourGame = () => {
         return () => clearInterval(timer);
     }, [winner, gameStarted, board.length, undoTimeLeft]);
 
+    // --- טיימר Undo ---
     useEffect(() => {
         if (undoTimeLeft <= 0) return;
 
         const timer = setInterval(() => {
             setUndoTimeLeft(prev => {
                 if (prev <= 1) {
-                    setLastMove(null);
+                    setLastMove(null); // פג תוקף ה-Undo
                     return 0;
                 }
                 return prev - 1;
