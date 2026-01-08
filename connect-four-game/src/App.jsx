@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import SetupScreen from './components/SetupScreen';
 import Board from './components/Board';
 import StatusBar from './components/StatusBar';
+import Confetti from './components/Confetti';
 import './App.css';
 
 const ConnectFourGame = () => {
@@ -208,6 +209,8 @@ const ConnectFourGame = () => {
 
     return (
         <div className="app-container">
+            {winner && <Confetti />}
+            
             <div className="app-wrapper">
                 <h1 className="app-title">4 בשורה</h1>
 
