@@ -9,7 +9,7 @@ const Board = ({ board, onColumnClick, animatingCell, winner, cellSize }) => {
         <div className="board-container">
             <div
                 className="board-grid"
-                // יצירת גריד דינמי לפי מספר העמודות וגודל התא
+                // יצירת לוח דינמי לפי מספר העמודות וגודל התא
                 style={{ gridTemplateColumns: `repeat(${cols}, ${cellSize}px)` }}
             >
                 {board.map((row, rowIndex) =>

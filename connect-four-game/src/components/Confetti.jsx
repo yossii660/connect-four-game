@@ -8,7 +8,6 @@ const Confetti = () => {
         const ctx = canvas.getContext('2d');
         let animationFrameId;
 
-        // התאמת גודל הקנבס לחלון
         const resizeCanvas = () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
@@ -20,7 +19,6 @@ const Confetti = () => {
         const colors = ['#ef4444', '#fbbf24', '#2563eb', '#3fdb27', '#9333ea', '#f472b6'];
         const particles = [];
 
-        // יצירת 200 חלקיקים התחלתיים
         for (let i = 0; i < 200; i++) {
             particles.push({
                 x: Math.random() * canvas.width,

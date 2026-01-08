@@ -85,7 +85,7 @@ const ConnectFourGame = () => {
         return false;
     }, []);
 
-    // --- לוגיקת רמז (AI פשוט) ---
+    // --- לוגיקת רמז ---
     // בודק אם השחקן יכול לנצח במהלך הבא
     const canWinInNextMove = useCallback((board, player) => {
         for (let col = 0; col < board[0].length; col++) {
