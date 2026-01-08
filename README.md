@@ -4,6 +4,13 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Available Scripts
 
+### To start The Game You need to do this steps on the command line:
+step 1 : cd connect-four-game
+
+step 2 : npm run dev
+
+#### Enjoy !!
+
 In the project directory, you can run:
 
 ### `npm start`
